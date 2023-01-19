@@ -1,0 +1,12 @@
+{
+  "name": "jbdavid/328/diner",
+  "authors": [
+    {
+      "name": "Jasmine David",
+      "email": "david.jasmine@student.greenriver.edu"
+    }
+  ],
+  "require": {
+    "bcosca/fatfree-core": "dev-master"
+  }
+}
