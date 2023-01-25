@@ -21,6 +21,20 @@ $f3->route('GET /', function (){ // invokes an anonymous function
 //    echo "Welcome";
 });
 
+// Define a breakfast route (328/diner/breakfast)
+$f3->route('GET /breakfast', function (){
+    // Instantiate view
+    $view = new Template();
+    echo $view->render('views/breakfast.html');
+});
+
+// Define a lunch route (328/diner/lunch)
+$f3->route('GET /lunch', function (){
+    // Instantiate view
+    $view = new Template();
+    echo $view->render('views/lunch.html');
+});
+
 // Run Fat-Free
 $f3->run();
 
