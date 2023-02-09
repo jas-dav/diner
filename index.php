@@ -1,69 +1,102 @@
 <?php
 
-// This is my controller
+// order1 route -> views/order-form1.html
+// summary route -> views/order-summary.html
 
-// Turn on error reporting
+//This is my controller
+
+//Turn on error reporting
 ini_set('display_errors', 1);
 error_reporting(E_ALL);
 
-// Start a session
+//Start a session
 session_start();
 
-// Require the autoload file
+//Require autoload and data-layer files
 require_once('vendor/autoload.php');
+require_once('model/data-layer.php');
+//var_dump(getMeals()); // prints out getMeals function array
 
-// Instantiate F3 base class
+
+//Instantiate F3 Base class
 $f3 = Base::instance();
 
+//Define a default route (328/diner)
+$f3->route('GET /', function() {
 
-// Define a default route (328/diner)
-$f3->route('GET /', function (){ // invokes an anonymous function
-    // Instantiate view
+    //Instantiate a view
     $view = new Template();
-    echo $view->render('views/diner-home.html');
-//    echo "Welcome";
+    echo $view->render("views/diner-home.html");
+
 });
 
-// Define a breakfast route (328/diner/breakfast)
-$f3->route('GET /breakfast', function (){
-    // Instantiate view
+//Define a breakfast route (328/diner/breakfast)
+$f3->route('GET /breakfast', function() {
+
+    //Instantiate a view
     $view = new Template();
-    echo $view->render('views/breakfast.html');
+    echo $view->render("views/breakfast.html");
+
 });
 
-// Define a lunch route (328/diner/lunch)
-$f3->route('GET /lunch', function (){
-    // Instantiate view
-    $view = new Template();
-    echo $view->render('views/lunch.html');
-});
+//Define an order1 route (328/diner/order1)
+$f3->route('GET|POST /order1', function($f3) {
 
-// Define a order form route (328/diner/order1)
-$f3->route('GET||POST /order1', function ($f3){
+    //var_dump($_POST);
+    //["food"]=> string(5) "pizza" ["meal"]=> string(9) "breakfast" }
 
-    // if the form has been posted
-    if($_SERVER['REQUEST_METHOD'] == 'POST'){
-        // move data from POST array to SESSION array
+
+    //If the form has been submitted
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        //Move data from POST array to SESSION array - if form has been posted
         $_SESSION['food'] = $_POST['food'];
         $_SESSION['meal'] = $_POST['meal'];
 
-        //redirect to summary page
-        $f3->reroute('summary');
-
+        //Redirect to summary page
+        $f3->reroute('order2');
     }
-    // Instantiate view
+
+    // Add meals to F3 hive
+    $f3->set("meals", getMeals()); // set meals to whatever the getMeals function returns
+
+    //Instantiate a view - if form hasn't been posted
     $view = new Template();
-    echo $view->render('views/order-form1.html');
+    echo $view->render("views/order-form1.html");
+
 });
 
-// Define a order summary route (328/diner/summary)
-$f3->route('GET /summary', function (){
-    // Instantiate view
+//Define an order2 route (328/diner/order2)
+$f3->route('GET|POST /order2', function($f3) {
+
+    //If the form has been submitted
+    if ($_SERVER['REQUEST_METHOD'] == 'POST') {
+
+        //Move data from POST array to SESSION array
+        $_SESSION['conds'] = implode(", ",$_POST['conds']);
+
+        //Redirect to summary page
+        $f3->reroute('summary');
+    }
+
+    // Add meals to F3 hive
+    $f3->set("condiments", getCondiments());
+
+    //Instantiate a view
     $view = new Template();
-    echo $view->render('views/summary.html');
+    echo $view->render("views/order-form2.html");
+
 });
 
-// Run Fat-Free
+//Define a summary route (328/diner/summary)
+$f3->route('GET /summary', function() {
+
+    //Instantiate a view
+    $view = new Template();
+    echo $view->render("views/summary.html");
+
+});
+
+
+//Run Fat Free
 $f3->run();
-
-?>
